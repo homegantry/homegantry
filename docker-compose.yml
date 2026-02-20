@@ -1,0 +1,24 @@
+services:
+  frontend:
+    build: 
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: homegantry-ui
+    environment:
+      - NODE_ENV=production
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.homegantry.rule=Host(`homegantry.com`)"
+      - "traefik.http.routers.homegantry.entrypoints=websecure"
+      - "traefik.http.routers.homegantry.tls.certresolver=myresolver"
+      - "traefik.http.services.homegantry.loadbalancer.server.port=3000"
+    restart: unless-stopped
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: homegantry-api
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock # For monitoring other containers
+    restart: unless-stopped

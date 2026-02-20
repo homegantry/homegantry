@@ -1,0 +1,52 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --color-matrix: #00FF41;
+  --color-bg: #0D0208;
+}
+
+body {
+  background-color: var(--color-bg);
+  color: var(--color-matrix);
+  font-family: 'Fira Code', 'Courier New', monospace;
+  margin: 0;
+  padding: 20px;
+  overflow: hidden;
+}
+
+/* Retro Scanline effect */
+body::before {
+  content: " ";
+  display: block;
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
+  z-index: 100;
+  background-size: 100% 2px, 3px 100%;
+  pointer-events: none;
+}
+
+/* Flickering text effect */
+.flicker {
+  animation: flicker 0.15s infinite;
+}
+
+@keyframes flicker {
+  0% { opacity: 0.97; }
+  5% { opacity: 0.95; }
+  10% { opacity: 0.9; }
+  15% { opacity: 0.93; }
+  20% { opacity: 0.98; }
+  25% { opacity: 0.95; }
+  100% { opacity: 1; }
+}
+
+.terminal-border {
+  border: 1px solid var(--color-matrix);
+  box-shadow: 0 0 10px var(--color-matrix);
+}
