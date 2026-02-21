@@ -3,50 +3,164 @@
 @tailwind utilities;
 
 :root {
-  --color-matrix: #00FF41;
-  --color-bg: #0D0208;
+  --c-matrix: #00FF41;
+  --c-matrix-dim: #00ff4155;
+  --c-matrix-mid: #00ff41aa;
+  --c-amber: #FFB000;
+  --c-cyan: #00D4FF;
+  --c-red: #FF0040;
+  --c-bg: #0D0208;
+  --c-panel: #0a1a0a;
 }
 
 body {
-  background-color: var(--color-bg);
-  color: var(--color-matrix);
-  font-family: 'Fira Code', 'Courier New', monospace;
-  margin: 0;
-  padding: 20px;
+  background: var(--c-bg);
+  color: var(--c-matrix);
+  font-family: 'Courier New', Courier, monospace;
   overflow: hidden;
 }
 
-/* Retro Scanline effect */
-body::before {
-  content: " ";
-  display: block;
-  position: absolute;
-  top: 0;
-  left: 0;
-  bottom: 0;
-  right: 0;
-  background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
-  z-index: 100;
-  background-size: 100% 2px, 3px 100%;
+/* Scanline overlay */
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(0, 0, 0, 0.08) 2px,
+    rgba(0, 0, 0, 0.08) 4px
+  );
   pointer-events: none;
+  z-index: 9999;
 }
 
-/* Flickering text effect */
 .flicker {
-  animation: flicker 0.15s infinite;
+  animation: flicker 3s infinite;
 }
 
 @keyframes flicker {
-  0% { opacity: 0.97; }
-  5% { opacity: 0.95; }
-  10% { opacity: 0.9; }
-  15% { opacity: 0.93; }
-  20% { opacity: 0.98; }
-  25% { opacity: 0.95; }
-  100% { opacity: 1; }
+  0%, 97%, 100% { opacity: 1; }
+  98% { opacity: 0.85; }
+  99% { opacity: 0.92; }
 }
 
-.terminal-border {
-  border: 1px solid var(--color-matrix);
-  box-shadow: 0 0 10px var(--color-matrix);
+.panel {
+  border: 1px solid var(--c-matrix);
+  background: var(--c-panel);
+  position: relative;
+  overflow: hidden;
+}
+
+.panel::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--c-matrix), transparent);
+}
+
+.panel-header {
+  font-size: 0.65rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  padding: 0.35rem 0.5rem;
+  border-bottom: 1px solid #00ff4133;
+  background: #00ff4108;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.panel-header .tag {
+  font-size: 0.55rem;
+  padding: 0.1rem 0.3rem;
+  border: 1px solid currentColor;
+  border-radius: 2px;
+}
+
+.tag-active { color: var(--c-matrix); }
+.tag-idle { color: var(--c-amber); }
+.tag-error { color: var(--c-red); }
+
+.data-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 0.15rem 0;
+  font-size: 0.7rem;
+  border-bottom: 1px solid #00ff4110;
+}
+
+.data-label { color: var(--c-matrix-mid); }
+.data-value { color: var(--c-matrix); font-weight: bold; }
+.data-value.amber { color: var(--c-amber); }
+.data-value.cyan { color: var(--c-cyan); }
+.data-value.red { color: var(--c-red); }
+
+.memory-line {
+  font-size: 0.6rem;
+  line-height: 1.4;
+  color: var(--c-matrix-mid);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.memory-line.heading {
+  color: var(--c-cyan);
+  font-weight: bold;
+  margin-top: 0.25rem;
+}
+
+.pulse-dot {
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  animation: pulse-glow 2s ease-in-out infinite;
+}
+
+.pulse-dot.active { background: var(--c-matrix); }
+.pulse-dot.idle { background: var(--c-amber); }
+
+@keyframes pulse-glow {
+  0%, 100% { opacity: 1; box-shadow: 0 0 4px currentColor; }
+  50% { opacity: 0.4; box-shadow: 0 0 1px currentColor; }
+}
+
+/* Bar chart styling */
+.bar-track {
+  height: 4px;
+  background: #00ff4115;
+  border-radius: 1px;
+  overflow: hidden;
+}
+
+.bar-fill {
+  height: 100%;
+  background: var(--c-matrix);
+  transition: width 0.6s ease;
+  border-radius: 1px;
+}
+
+.bar-fill.warn { background: var(--c-amber); }
+.bar-fill.crit { background: var(--c-red); }
+
+.scroll-fade {
+  mask-image: linear-gradient(to bottom, black 80%, transparent 100%);
+  -webkit-mask-image: linear-gradient(to bottom, black 80%, transparent 100%);
+}
+
+/* Cursor blink */
+.cursor-blink::after {
+  content: '_';
+  animation: blink 1s step-end infinite;
+}
+
+@keyframes blink {
+  0%, 50% { opacity: 1; }
+  51%, 100% { opacity: 0; }
 }

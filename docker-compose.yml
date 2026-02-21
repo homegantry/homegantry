@@ -1,6 +1,6 @@
 services:
   frontend:
-    build: 
+    build:
       context: ./frontend
       dockerfile: Dockerfile
     container_name: homegantry-ui
@@ -9,12 +9,19 @@ services:
     ports:
       - "3000:3000"
     restart: unless-stopped
+    depends_on:
+      - backend
 
   backend:
     build:
       context: ./backend
       dockerfile: Dockerfile
     container_name: homegantry-api
+    environment:
+      - GANTRY_MEMORY_PATH=/memory/MEMORY.md
     volumes:
-      - /var/run/docker.sock:/var/run/docker.sock # For monitoring other containers
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ${HOME}/.claude/projects/-home-g-git-homegantry/memory:/memory:ro
+    ports:
+      - "8000:8000"
     restart: unless-stopped
