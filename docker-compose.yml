@@ -6,12 +6,8 @@ services:
     container_name: homegantry-ui
     environment:
       - NODE_ENV=production
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.homegantry.rule=Host(`homegantry.com`)"
-      - "traefik.http.routers.homegantry.entrypoints=websecure"
-      - "traefik.http.routers.homegantry.tls.certresolver=myresolver"
-      - "traefik.http.services.homegantry.loadbalancer.server.port=3000"
+    ports:
+      - "3000:3000"
     restart: unless-stopped
 
   backend:
