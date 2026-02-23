@@ -18,3 +18,5 @@ services:
     ports:
       - "8000:8000"
     restart: unless-stopped
+    volumes:
+      - /home/g/.openclaw/workspace:/workspace:ro

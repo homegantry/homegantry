@@ -17,7 +17,7 @@ try:
 except Exception:
     client = None
 
-MEMORY_PATH = os.environ.get("GANTRY_MEMORY_PATH", "/home/g/.openclaw/workspace/MEMORY.md")
+MEMORY_PATH = os.environ.get("GANTRY_MEMORY_PATH", "/workspace/MEMORY.md")
 
 
 @app.get("/api/status")
@@ -261,7 +261,7 @@ def get_weather():
     try:
         url = "https://wttr.in/Amsterdam?format=j1"
         resp = urllib.request.urlopen(url, timeout=10)
-        data = _json.loads(resp.read().decode())
+        data = json.loads(resp.read().decode())
         current = data["current_condition"][0]
         return {
             "location": "Amsterdam, NL",
