@@ -5,6 +5,10 @@ import docker
 import subprocess
 import os
 import time
+import re
+import urllib.request
+import urllib.error
+import json
 
 app = FastAPI()
 
@@ -13,7 +17,7 @@ try:
 except Exception:
     client = None
 
-MEMORY_PATH = os.environ.get("GANTRY_MEMORY_PATH", str(Path.home() / ".claude/projects/-home-g-git-homegantry/memory/MEMORY.md"))
+MEMORY_PATH = os.environ.get("GANTRY_MEMORY_PATH", "/home/g/.openclaw/workspace/MEMORY.md")
 
 
 @app.get("/api/status")
@@ -158,6 +162,118 @@ def get_memory():
         }
     except Exception as e:
         return {"exists": False, "lines": [], "snippet": f"[ READ ERROR: {e} ]"}
+
+
+@app.get("/api/logs")
+def get_logs():
+    """Return the last 100 lines of system/application logs."""
+    entries = []
+
+    # Try journalctl first (systemd-based systems)
+    try:
+        result = subprocess.run(
+            ["journalctl", "--user", "--no-pager", "-n", "100", "-o", "json"],
+            capture_output=True, text=True, timeout=5,
+        )
+        if result.returncode == 0 and result.stdout.strip():
+            import json as _json
+            for line in result.stdout.strip().splitlines():
+                try:
+                    obj = _json.loads(line)
+                    ts = int(obj.get("__REALTIME_TIMESTAMP", "0")) // 1_000_000
+                    priority = int(obj.get("PRIORITY", 6))
+                    level = {0: "EMERG", 1: "ALERT", 2: "CRIT", 3: "ERROR",
+                             4: "WARN", 5: "NOTICE", 6: "INFO", 7: "DEBUG"}.get(priority, "INFO")
+                    msg = obj.get("MESSAGE", "")
+                    unit = obj.get("_SYSTEMD_UNIT", obj.get("SYSLOG_IDENTIFIER", ""))
+                    entries.append({"timestamp": ts, "level": level, "message": f"[{unit}] {msg}" if unit else msg})
+                except (_json.JSONDecodeError, ValueError):
+                    continue
+    except (FileNotFoundError, subprocess.TimeoutExpired):
+        pass
+
+    # Fallback: try system journal without --user flag
+    if not entries:
+        try:
+            result = subprocess.run(
+                ["journalctl", "--no-pager", "-n", "100", "-o", "short-iso"],
+                capture_output=True, text=True, timeout=5,
+            )
+            if result.returncode == 0 and result.stdout.strip():
+                for line in result.stdout.strip().splitlines():
+                    # Parse short-iso format: "2026-02-21T10:30:00+0000 host unit[pid]: message"
+                    match = re.match(r"^(\S+)\s+\S+\s+(\S+?)(?:\[\d+\])?:\s+(.*)", line)
+                    if match:
+                        ts_str, unit, msg = match.groups()
+                        try:
+                            from datetime import datetime, timezone
+                            dt = datetime.fromisoformat(ts_str.replace("+0000", "+00:00"))
+                            ts = int(dt.timestamp())
+                        except Exception:
+                            ts = int(time.time())
+                        entries.append({"timestamp": ts, "level": "INFO", "message": f"[{unit}] {msg}"})
+                    elif line.strip():
+                        entries.append({"timestamp": int(time.time()), "level": "INFO", "message": line.strip()})
+        except (FileNotFoundError, subprocess.TimeoutExpired):
+            pass
+
+    # Fallback: try /var/log/syslog
+    if not entries:
+        try:
+            result = subprocess.run(
+                ["tail", "-n", "100", "/var/log/syslog"],
+                capture_output=True, text=True, timeout=5,
+            )
+            if result.returncode == 0 and result.stdout.strip():
+                for line in result.stdout.strip().splitlines():
+                    entries.append({"timestamp": int(time.time()), "level": "INFO", "message": line.strip()})
+        except (FileNotFoundError, subprocess.TimeoutExpired):
+            pass
+
+    return entries[-100:]
+
+
+@app.get("/api/gateway-status")
+def get_gateway_status():
+    """Check if the OpenClaw gateway is reachable."""
+    gateway_url = os.environ.get("OPENCLAW_GATEWAY_URL", "http://localhost:8080")
+    try:
+        req = urllib.request.Request(gateway_url, method="HEAD")
+        resp = urllib.request.urlopen(req, timeout=3)
+        return {
+            "reachable": True,
+            "status_code": resp.status,
+            "url": gateway_url,
+            "ts": int(time.time()),
+        }
+    except (urllib.error.URLError, urllib.error.HTTPError, OSError) as e:
+        return {
+            "reachable": False,
+            "error": str(e),
+            "url": gateway_url,
+            "ts": int(time.time()),
+        }
+
+
+@app.get("/api/weather")
+def get_weather():
+    """Get current weather for Amsterdam, NL."""
+    try:
+        url = "https://wttr.in/Amsterdam?format=j1"
+        resp = urllib.request.urlopen(url, timeout=10)
+        data = _json.loads(resp.read().decode())
+        current = data["current_condition"][0]
+        return {
+            "location": "Amsterdam, NL",
+            "temp_C": int(current["temp_C"]),
+            "condition": current["weatherDesc"][0]["value"],
+            "humidity": int(current["humidity"]),
+            "wind_kmh": int(current["windspeedKmph"]),
+            "feels_C": int(current["FeelsLikeC"]),
+            "ts": int(time.time()),
+        }
+    except Exception as e:
+        return {"error": str(e), "ts": int(time.time())}
 
 
 if __name__ == "__main__":

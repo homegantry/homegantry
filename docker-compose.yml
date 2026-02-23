@@ -4,8 +4,6 @@ services:
       context: ./frontend
       dockerfile: Dockerfile
     container_name: homegantry-ui
-    environment:
-      - NODE_ENV=production
     ports:
       - "3000:3000"
     restart: unless-stopped
@@ -17,11 +15,6 @@ services:
       context: ./backend
       dockerfile: Dockerfile
     container_name: homegantry-api
-    environment:
-      - GANTRY_MEMORY_PATH=/memory/MEMORY.md
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
-      - ${HOME}/.claude/projects/-home-g-git-homegantry/memory:/memory:ro
     ports:
       - "8000:8000"
     restart: unless-stopped
