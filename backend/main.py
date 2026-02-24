@@ -276,24 +276,37 @@ def get_weather():
         return {"error": str(e), "ts": int(time.time())}
 
 
-# News storage (in-memory for now)
+# News storage with sample data
 NEWS_DATA = {
-    "dutch-politics": {"articles": [], "last_updated": None},
-    "ai-news": {"articles": [], "last_updated": None},
+    "dutch-politics": {
+        "articles": [
+            {"title": " Rutte viert zijn verjaardag: hoe oud wordt de demissionair minister-president?", "url": "https://nos.nl", "source": "NOS", "published": "24 feb", "summary": "Demissionair minister-president Mark Rutte viert vandaag zijn verjaardag."},
+            {"title": "Formatie: onderhandelaars bereiken doorbraak in coalitiegesprekken", "url": "https://nos.nl", "source": "NOS", "published": "24 feb", "summary": "De formatieonderhandelingen hebben een doorbraak bereikt."},
+            {"title": "Klimaatbeleid: nieuwe maatregelen aangekondigd door demissionair kabinet", "url": "https://nu.nl", "source": "NU", "published": "23 feb", "summary": "Het demissionaire kabinet heeft nieuwe klimaatmaatregelen aangekondigd."},
+        ],
+        "last_updated": int(time.time())
+    },
+    "ai-news": {
+        "articles": [
+            {"title": "GPT-5 release date leaked: What we know so far", "url": "https://techcrunch.com", "source": "TechCrunch", "published": "24 feb", "summary": "New details emerge about OpenAI's next-generation language model."},
+            {"title": "Claude 4 vs GPT-5: Which AI assistant wins?", "url": "https://theverge.com", "source": "The Verge", "published": "24 feb", "summary": "A detailed comparison of the latest AI assistants."},
+            {"title": "EU AI Act enforcement begins next month", "url": "https://wired.com", "source": "Wired", "published": "23 feb", "summary": "The European Union's AI regulation enters its enforcement phase."},
+        ],
+        "last_updated": int(time.time())
+    },
 }
 
 # Kanban board (in-memory)
 KANBAN_DATA = {
     "backlog": [
-        {"id": "kb-1", "title": "News article fetching", "type": "feature", "source": "g", "created": int(time.time())},
-        {"id": "kb-2", "title": "Settings page with config", "type": "feature", "source": "g", "created": int(time.time())},
+        {"id": "kb-1", "title": "News article fetching", "type": "feature", "source": "ai", "created": int(time.time())},
+        {"id": "kb-2", "title": "Settings page with config", "type": "feature", "source": "ai", "created": int(time.time())},
     ],
-    "in_progress": [
-        {"id": "kb-3", "title": "Kanban board", "type": "feature", "source": "g", "created": int(time.time())},
-    ],
+    "in_progress": [],
     "done": [
-        {"id": "kb-4", "title": "Lighter theme", "type": "feature", "source": "g", "created": int(time.time())},
-        {"id": "kb-5", "title": "Mobile sidebar", "type": "feature", "source": "g", "created": int(time.time())},
+        {"id": "kb-3", "title": "Kanban board", "type": "feature", "source": "ai", "created": int(time.time())},
+        {"id": "kb-4", "title": "Lighter theme", "type": "feature", "source": "ai", "created": int(time.time())},
+        {"id": "kb-5", "title": "Mobile sidebar", "type": "feature", "source": "ai", "created": int(time.time())},
     ],
 }
 
