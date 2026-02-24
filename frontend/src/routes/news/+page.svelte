@@ -4,6 +4,7 @@
   let topics = $state([]);
   let selectedTopic = $state(null);
   let articles = $state([]);
+  let lastUpdated = $state(null);
   let loading = $state(false);
 
   async function fetchTopics() {
@@ -29,6 +30,7 @@
       if (res.ok) {
         const data = await res.json();
         articles = data.articles || [];
+        lastUpdated = data.last_updated;
       }
     } catch (e) {
       console.error('Failed to fetch articles', e);
@@ -50,9 +52,16 @@
 </script>
 
 <div class="p-4 md:p-6 space-y-4 md:space-y-6">
-  <div>
-    <h1 class="text-xl md:text-2xl font-bold text-white">News</h1>
-    <p class="text-sm text-zinc-500 mt-1">Stay updated on your topics of interest</p>
+  <div class="flex items-start justify-between">
+    <div>
+      <h1 class="text-xl md:text-2xl font-bold text-white">News</h1>
+      <p class="text-sm text-zinc-500 mt-1">Stay updated on your topics of interest</p>
+    </div>
+    {#if lastUpdated}
+      <div class="text-xs text-zinc-600 text-right">
+        Updated {formatDate(lastUpdated)}
+      </div>
+    {/if}
   </div>
 
   <!-- Topic Selector -->

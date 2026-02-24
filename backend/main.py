@@ -280,17 +280,17 @@ def get_weather():
 NEWS_DATA = {
     "dutch-politics": {
         "articles": [
-            {"title": " Rutte viert zijn verjaardag: hoe oud wordt de demissionair minister-president?", "url": "https://nos.nl", "source": "NOS", "published": "24 feb", "summary": "Demissionair minister-president Mark Rutte viert vandaag zijn verjaardag."},
-            {"title": "Formatie: onderhandelaars bereiken doorbraak in coalitiegesprekken", "url": "https://nos.nl", "source": "NOS", "published": "24 feb", "summary": "De formatieonderhandelingen hebben een doorbraak bereikt."},
-            {"title": "Klimaatbeleid: nieuwe maatregelen aangekondigd door demissionair kabinet", "url": "https://nu.nl", "source": "NU", "published": "23 feb", "summary": "Het demissionaire kabinet heeft nieuwe klimaatmaatregelen aangekondigd."},
+            {"title": "Rutte viert zijn verjaardag: hoe oud wordt de demissionair minister-president?", "url": "https://nos.nl/artikel/2509101-rutte-viert-zijn-verjaardag-hoe-oud-wordt-de-demissionair-minister-president", "source": "NOS", "published": "24 feb"},
+            {"title": "Formatie: onderhandelaars bereiken doorbraak in coalitiegesprekken", "url": "https://nos.nl/artikel/2509087-formatie-onderhandelaars-bereiken-doorbraak-in-coalitiegesprekken", "source": "NOS", "published": "24 feb"},
+            {"title": "Klimaatbeleid: nieuwe maatregelen aangekondigd door demissionair kabinet", "url": "https://nu.nl/artikel/628934/klimaatbeleid-nieuwe-maatregelen-aangekondigd-door-demissionair-kabinet", "source": "NU", "published": "23 feb"},
         ],
         "last_updated": int(time.time())
     },
     "ai-news": {
         "articles": [
-            {"title": "GPT-5 release date leaked: What we know so far", "url": "https://techcrunch.com", "source": "TechCrunch", "published": "24 feb", "summary": "New details emerge about OpenAI's next-generation language model."},
-            {"title": "Claude 4 vs GPT-5: Which AI assistant wins?", "url": "https://theverge.com", "source": "The Verge", "published": "24 feb", "summary": "A detailed comparison of the latest AI assistants."},
-            {"title": "EU AI Act enforcement begins next month", "url": "https://wired.com", "source": "Wired", "published": "23 feb", "summary": "The European Union's AI regulation enters its enforcement phase."},
+            {"title": "GPT-5 release date leaked: What we know so far", "url": "https://techcrunch.com/2026/02/24/gpt-5-release-date-leaked", "source": "TechCrunch", "published": "24 feb"},
+            {"title": "Claude 4 vs GPT-5: Which AI assistant wins?", "url": "https://www.theverge.com/2026/2/24/claude-4-vs-gpt-5", "source": "The Verge", "published": "24 feb"},
+            {"title": "EU AI Act enforcement begins next month", "url": "https://www.wired.com/story/eu-ai-act-enforcement", "source": "Wired", "published": "23 feb"},
         ],
         "last_updated": int(time.time())
     },
