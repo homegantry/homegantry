@@ -298,6 +298,7 @@ NEWS_DATA = {
 
 # Kanban board (persistent)
 KANBAN_FILE = "/workspace/kanban.json"
+FALLBACK_KANBAN_FILE = "/home/g/kanban.json"
 
 def load_kanban():
     """Load kanban data from file or use defaults."""
@@ -317,23 +318,26 @@ def load_kanban():
             {"id": "kb-5", "title": "Mobile sidebar", "type": "feature", "source": "ai", "created": int(time.time())},
         ],
     }
-    try:
-        if os.path.exists(KANBAN_FILE):
-            with open(KANBAN_FILE, 'r') as f:
-                return json.load(f)
-    except Exception:
-        pass
+    for f in [KANBAN_FILE, FALLBACK_KANBAN_FILE]:
+        try:
+            if os.path.exists(f):
+                with open(f, 'r') as fp:
+                    return json.load(fp)
+        except Exception:
+            pass
     return default
 
 def save_kanban(data):
     """Save kanban data to file."""
     import json
-    try:
-        os.makedirs(os.path.dirname(KANBAN_FILE), exist_ok=True)
-        with open(KANBAN_FILE, 'w') as f:
-            json.dump(data, f, indent=2)
-    except Exception:
-        pass
+    # Save to both locations
+    for f in [KANBAN_FILE, FALLBACK_KANBAN_FILE]:
+        try:
+            os.makedirs(os.path.dirname(f), exist_ok=True)
+            with open(f, 'w') as fp:
+                json.dump(data, fp, indent=2)
+        except Exception:
+            pass
 
 KANBAN_DATA = load_kanban()
 
