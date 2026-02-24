@@ -5,22 +5,25 @@
   let status = $state(null);
   let memory = $state(null);
   let gatewayStatus = $state(null);
+  let openclawStatus = $state(null);
   let pollTimer = $state(null);
   let time = $state(new Date());
 
   const API = '/api';
 
   async function fetchAll() {
-    const [w, s, m, g] = await Promise.allSettled([
+    const [w, s, m, g, o] = await Promise.allSettled([
       fetch(`${API}/weather`).then(r => r.json()),
       fetch(`${API}/status`).then(r => r.json()),
       fetch(`${API}/memory`).then(r => r.json()),
       fetch(`${API}/gateway-status`).then(r => r.json()),
+      fetch(`${API}/openclaw`).then(r => r.json()),
     ]);
     if (w.status === 'fulfilled') weather = w.value;
     if (s.status === 'fulfilled') status = s.value;
     if (m.status === 'fulfilled') memory = m.value;
     if (g.status === 'fulfilled') gatewayStatus = g.value;
+    if (o.status === 'fulfilled') openclawStatus = o.value;
   }
 
   function fmtUptime(seconds) {
@@ -212,6 +215,12 @@
             <span class="text-zinc-500">Gantry Version</span>
             <div class="text-zinc-200 font-medium">{status.gantry.version}</div>
           </div>
+          {#if openclawStatus}
+            <div>
+              <span class="text-zinc-500">OpenClaw</span>
+              <div class="text-zinc-200 font-medium">{openclawStatus.gateway_reachable ? '🟢 Online' : '🔴 Offline'}</div>
+            </div>
+          {/if}
         </div>
       {:else}
         <div class="text-zinc-500">Loading system info...</div>

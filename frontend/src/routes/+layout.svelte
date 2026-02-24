@@ -3,6 +3,7 @@
   import { page } from '$app/state';
 
   let { children } = $props();
+  let sidebarOpen = $state(false);
 
   const nav = [
     { href: '/', label: 'Overview', icon: 'grid' },
@@ -16,11 +17,39 @@
     if (href === '/') return page.url.pathname === '/';
     return page.url.pathname.startsWith(href);
   }
+
+  function closeSidebar() {
+    sidebarOpen = false;
+  }
 </script>
 
 <div class="flex h-screen overflow-hidden">
+  <!-- Mobile menu button -->
+  <button 
+    onclick={() => sidebarOpen = !sidebarOpen}
+    class="md:hidden fixed top-3 left-3 z-50 p-2 bg-zinc-800 rounded-lg text-zinc-400 hover:text-white border border-zinc-700"
+  >
+    <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+    </svg>
+  </button>
+
+  <!-- Mobile overlay -->
+  {#if sidebarOpen}
+    <div 
+      class="md:hidden fixed inset-0 bg-black/50 z-30"
+      onclick={closeSidebar}
+      role="button"
+      tabindex="0"
+      onkeydown={(e) => e.key === 'Escape' && closeSidebar()}
+    ></div>
+  {/if}
+
   <!-- Sidebar -->
-  <aside class="w-56 flex-shrink-0 border-r border-border bg-surface-1 flex flex-col">
+  <aside 
+    class="w-56 flex-shrink-0 border-r border-border bg-surface-1 flex flex-col transition-transform duration-200
+           {sidebarOpen ? 'translate-x-0' : '-translate-x-full'} md:translate-x-0 fixed md:relative h-full z-40"
+  >
     <!-- Brand -->
     <div class="px-4 h-14 flex items-center border-b border-border">
       <span class="text-sm font-bold text-white tracking-tight">Gantry</span>
@@ -30,7 +59,12 @@
     <!-- Navigation -->
     <nav class="flex-1 px-3 py-4 space-y-1">
       {#each nav as item}
-        <a href={item.href} class="nav-item" class:active={isActive(item.href)}>
+        <a 
+          href={item.href} 
+          class="nav-item" 
+          class:active={isActive(item.href)}
+          onclick={closeSidebar}
+        >
           {#if item.icon === 'grid'}
             <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.75">
               <path d="M3 3h7v7H3zM14 3h7v7h-7zM3 14h7v7H3zM14 14h7v7h-7z" />
@@ -68,7 +102,7 @@
   </aside>
 
   <!-- Main content -->
-  <main class="flex-1 overflow-y-auto">
+  <main class="flex-1 overflow-y-auto md:ml-0 ml-0">
     {@render children()}
   </main>
 </div>

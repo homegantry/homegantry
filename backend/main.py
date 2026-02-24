@@ -283,6 +283,31 @@ NEWS_DATA = {
 }
 
 
+@app.get("/api/openclaw")
+def get_openclaw_status():
+    """Get OpenClaw gateway status and stats."""
+    import socket
+    
+    gateway_url = os.environ.get("OPENCLAW_GATEWAY_URL", "http://localhost:8080")
+    
+    try:
+        # Try to reach the gateway
+        parsed = urllib.parse.urlparse(gateway_url)
+        sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        sock.settimeout(2)
+        result = sock.connect_ex((parsed.hostname or "localhost", parsed.port or 8080))
+        sock.close()
+        reachable = result == 0
+    except Exception:
+        reachable = False
+    
+    return {
+        "gateway_reachable": reachable,
+        "gateway_url": gateway_url,
+        "ts": int(time.time()),
+    }
+
+
 @app.get("/api/news")
 def get_news():
     """Get all news topics and their articles."""
