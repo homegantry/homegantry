@@ -302,7 +302,10 @@ KANBAN_DATA = {
         {"id": "kb-1", "title": "News article fetching", "type": "feature", "source": "ai", "created": int(time.time())},
         {"id": "kb-2", "title": "Settings page with config", "type": "feature", "source": "ai", "created": int(time.time())},
     ],
-    "in_progress": [],
+    "in_progress": [
+        {"id": "kb-6", "title": "Hamburger menu overlaps title on mobile", "type": "bug", "source": "gerald", "created": int(time.time())},
+        {"id": "kb-7", "title": "Logs page stays empty", "type": "bug", "source": "gerald", "created": int(time.time())},
+    ],
     "done": [
         {"id": "kb-3", "title": "Kanban board", "type": "feature", "source": "ai", "created": int(time.time())},
         {"id": "kb-4", "title": "Lighter theme", "type": "feature", "source": "ai", "created": int(time.time())},

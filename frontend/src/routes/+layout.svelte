@@ -10,7 +10,6 @@
     { href: '/news', label: 'News', icon: 'news' },
     { href: '/kanban', label: 'Kanban', icon: 'kanban' },
     { href: '/projects', label: 'Projects', icon: 'folder' },
-    { href: '/logs', label: 'Logs', icon: 'terminal' },
     { href: '/settings', label: 'Settings', icon: 'settings' },
   ];
 
@@ -107,7 +106,7 @@
   </aside>
 
   <!-- Main content -->
-  <main class="flex-1 overflow-y-auto md:ml-0 ml-0">
+  <main class="flex-1 overflow-y-auto p-4 md:p-6 pt-16 md:pt-6">
     {@render children()}
   </main>
 </div>
