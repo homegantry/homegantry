@@ -69,7 +69,10 @@
                 <div class="card p-3 hover:border-zinc-600 transition-colors">
                   <div class="flex items-start justify-between gap-2">
                     <div class="flex-1 min-w-0">
-                      <div class="text-sm text-zinc-200">{card.title}</div>
+                      <div class="text-sm font-medium text-zinc-200">{card.title}</div>
+                      {#if card.desc}
+                        <div class="text-xs text-zinc-500 mt-1">{card.desc}</div>
+                      {/if}
                       <div class="flex items-center gap-2 mt-2">
                         <span class="text-xs px-1.5 py-0.5 rounded border {getTypeColor(card.type, card.source)}">
                           {card.type}
