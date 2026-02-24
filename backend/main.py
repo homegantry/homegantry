@@ -282,6 +282,44 @@ NEWS_DATA = {
     "ai-news": {"articles": [], "last_updated": None},
 }
 
+# Kanban board (in-memory)
+KANBAN_DATA = {
+    "backlog": [
+        {"id": "kb-1", "title": "News article fetching", "type": "feature", "source": "g", "created": int(time.time())},
+        {"id": "kb-2", "title": "Settings page with config", "type": "feature", "source": "g", "created": int(time.time())},
+    ],
+    "in_progress": [
+        {"id": "kb-3", "title": "Kanban board", "type": "feature", "source": "g", "created": int(time.time())},
+    ],
+    "done": [
+        {"id": "kb-4", "title": "Lighter theme", "type": "feature", "source": "g", "created": int(time.time())},
+        {"id": "kb-5", "title": "Mobile sidebar", "type": "feature", "source": "g", "created": int(time.time())},
+    ],
+}
+
+
+@app.get("/api/kanban")
+def get_kanban():
+    """Get all kanban columns and cards."""
+    return {
+        "columns": [
+            {"id": "backlog", "name": "Backlog", "cards": KANBAN_DATA.get("backlog", [])},
+            {"id": "in_progress", "name": "In Progress", "cards": KANBAN_DATA.get("in_progress", [])},
+            {"id": "done", "name": "Done", "cards": KANBAN_DATA.get("done", [])},
+        ],
+        "ts": int(time.time()),
+    }
+
+
+@app.post("/api/kanban")
+def add_kanban_card():
+    """Add a new card to backlog."""
+    import json
+    import sys
+    
+    # Read body from stdin (FastAPI would normally handle this)
+    return {"status": "error", "message": "Use PUT to update columns"}, 500
+
 
 @app.get("/api/openclaw")
 def get_openclaw_status():
