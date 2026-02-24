@@ -26,4 +26,4 @@ services:
     container_name: homegantry-api
     restart: unless-stopped
     volumes:
-      - /home/g/.openclaw/workspace:/workspace:ro
+      - /home/g/.openclaw/workspace:/workspace:rw
