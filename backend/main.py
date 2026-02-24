@@ -276,25 +276,92 @@ def get_weather():
         return {"error": str(e), "ts": int(time.time())}
 
 
-# News storage with sample data
-NEWS_DATA = {
-    "dutch-politics": {
-        "articles": [
-            {"title": "Rutte viert zijn verjaardag: hoe oud wordt de demissionair minister-president?", "url": "https://nos.nl/artikel/2509101-rutte-viert-zijn-verjaardag-hoe-oud-wordt-de-demissionair-minister-president", "source": "NOS", "published": "24 feb"},
-            {"title": "Formatie: onderhandelaars bereiken doorbraak in coalitiegesprekken", "url": "https://nos.nl/artikel/2509087-formatie-onderhandelaars-bereiken-doorbraak-in-coalitiegesprekken", "source": "NOS", "published": "24 feb"},
-            {"title": "Klimaatbeleid: nieuwe maatregelen aangekondigd door demissionair kabinet", "url": "https://nu.nl/artikel/628934/klimaatbeleid-nieuwe-maatregelen-aangekondigd-door-demissionair-kabinet", "source": "NU", "published": "23 feb"},
-        ],
-        "last_updated": int(time.time())
-    },
-    "ai-news": {
-        "articles": [
-            {"title": "GPT-5 release date leaked: What we know so far", "url": "https://techcrunch.com/2026/02/24/gpt-5-release-date-leaked", "source": "TechCrunch", "published": "24 feb"},
-            {"title": "Claude 4 vs GPT-5: Which AI assistant wins?", "url": "https://www.theverge.com/2026/2/24/claude-4-vs-gpt-5", "source": "The Verge", "published": "24 feb"},
-            {"title": "EU AI Act enforcement begins next month", "url": "https://www.wired.com/story/eu-ai-act-enforcement", "source": "Wired", "published": "23 feb"},
-        ],
-        "last_updated": int(time.time())
-    },
+import json
+import time
+import os
+import urllib.request
+import urllib.error
+import ssl
+
+# News RSS feeds
+RSS_FEEDS = {
+    "dutch-politics": [
+        "https://nos.nl/feed",
+        "https://nu.nl/rss",
+    ],
+    "ai-news": [
+        "https://techcrunch.com/feed/",
+        "https://www.theverge.com/rss/index.xml",
+    ],
 }
+
+def fetch_rss(feed_url):
+    """Fetch and parse RSS feed."""
+    articles = []
+    try:
+        ctx = ssl.create_default_context()
+        ctx.check_hostname = False
+        ctx.verify_mode = ssl.CERT_NONE
+        req = urllib.request.Request(feed_url, headers={'User-Agent': 'Gantry/1.0'})
+        resp = urllib.request.urlopen(req, timeout=10, context=ctx)
+        data = resp.read().decode('utf-8', errors='ignore')
+        
+        # Simple RSS parsing
+        import re
+        # Extract titles
+        titles = re.findall(r'<title><!\[CDATA\[(.*?)\]\]></title>', data, re.DOTALL)
+        if not titles:
+            titles = re.findall(r'<title>([^<]+)</title>', data)
+        # Extract links
+        links = re.findall(r'<link><!\[CDATA\[(.*?)\]\]></link>', data, re.DOTALL)
+        if not links:
+            links = re.findall(r'<link>([^<]+)</link>', data)
+        
+        # Clean titles (skip first which is usually feed title)
+        titles = titles[1:6] if len(titles) > 1 else titles[:5]
+        links = links[1:6] if len(links) > 1 else links[:5]
+        
+        for i, title in enumerate(titles):
+            title = title.strip()
+            if title and not title.startswith('<?xml'):
+                articles.append({
+                    "title": title,
+                    "url": links[i].strip() if i < len(links) else "",
+                    "source": feed_url.split('/')[2].split('.')[0].capitalize(),
+                    "published": time.strftime("%d %b")
+                })
+    except Exception as e:
+        print(f"Error fetching {feed_url}: {e}")
+    return articles
+
+def update_news():
+    """Update news from RSS feeds."""
+    global NEWS_DATA
+    for topic, feeds in RSS_FEEDS.items():
+        all_articles = []
+        for feed in feeds:
+            articles = fetch_rss(feed)
+            all_articles.extend(articles)
+        # Deduplicate by title
+        seen = set()
+        unique = []
+        for a in all_articles:
+            if a['title'] not in seen:
+                seen.add(a['title'])
+                unique.append(a)
+        NEWS_DATA[topic] = {
+            "articles": unique[:10],
+            "last_updated": int(time.time())
+        }
+
+# News storage
+NEWS_DATA = {
+    "dutch-politics": {"articles": [], "last_updated": None},
+    "ai-news": {"articles": [], "last_updated": None},
+}
+
+# Initial fetch
+update_news()
 
 # Kanban board (persistent)
 KANBAN_FILE = "/workspace/kanban.json"
@@ -414,6 +481,13 @@ def get_openclaw_status():
         "gateway_url": gateway_url,
         "ts": int(time.time()),
     }
+
+
+@app.post("/api/news/refresh")
+def refresh_news():
+    """Force refresh news from RSS feeds."""
+    update_news()
+    return {"status": "ok", "ts": int(time.time())}
 
 
 @app.get("/api/news")
