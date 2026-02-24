@@ -20,11 +20,11 @@
     }
   }
 
-  function getTypeColor(type) {
-    return type === 'feature' ? 'bg-indigo-500/20 text-indigo-400 border-indigo-500/30' 
-         : type === 'bug' ? 'bg-red-500/20 text-red-400 border-red-500/30'
-         : type === 'g' ? 'bg-amber-500/20 text-amber-400 border-amber-500/30'
-         : 'bg-zinc-500/20 text-zinc-400 border-zinc-500/30';
+  function getTypeColor(type, source) {
+    // Color by source: Gerald=amber, AI=indigo, Bug=red
+    if (type === 'bug') return 'bg-red-500/20 text-red-400 border-red-500/30';
+    if (source === 'gerald') return 'bg-amber-500/20 text-amber-400 border-amber-500/30';
+    return 'bg-indigo-500/20 text-indigo-400 border-indigo-500/30'; // AI
   }
 
   function getSourceLabel(source) {
@@ -71,7 +71,7 @@
                     <div class="flex-1 min-w-0">
                       <div class="text-sm text-zinc-200">{card.title}</div>
                       <div class="flex items-center gap-2 mt-2">
-                        <span class="text-xs px-1.5 py-0.5 rounded border {getTypeColor(card.type)}">
+                        <span class="text-xs px-1.5 py-0.5 rounded border {getTypeColor(card.type, card.source)}">
                           {card.type}
                         </span>
                         <span class="text-xs text-zinc-600">by {getSourceLabel(card.source)}</span>
@@ -96,19 +96,15 @@
       <div class="flex flex-wrap gap-4 text-xs">
         <div class="flex items-center gap-2">
           <span class="w-2 h-2 rounded bg-indigo-500"></span>
-          <span class="text-zinc-500">Feature</span>
+          <span class="text-zinc-500">AI suggested</span>
+        </div>
+        <div class="flex items-center gap-2">
+          <span class="w-2 h-2 rounded bg-amber-500"></span>
+          <span class="text-zinc-500">Gerald requested</span>
         </div>
         <div class="flex items-center gap-2">
           <span class="w-2 h-2 rounded bg-red-500"></span>
           <span class="text-zinc-500">Bug</span>
-        </div>
-        <div class="flex items-center gap-2">
-          <span class="w-2 h-2 rounded bg-amber-500"></span>
-          <span class="text-zinc-500">Requested by Gerald</span>
-        </div>
-        <div class="flex items-center gap-2">
-          <span class="w-2 h-2 rounded bg-zinc-500"></span>
-          <span class="text-zinc-500">Suggested by AI</span>
         </div>
       </div>
     </div>
