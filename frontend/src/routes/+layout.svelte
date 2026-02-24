@@ -6,6 +6,7 @@
 
   const nav = [
     { href: '/', label: 'Overview', icon: 'grid' },
+    { href: '/news', label: 'News', icon: 'news' },
     { href: '/projects', label: 'Projects', icon: 'folder' },
     { href: '/logs', label: 'Logs', icon: 'terminal' },
     { href: '/settings', label: 'Settings', icon: 'settings' },
@@ -37,6 +38,10 @@
           {:else if item.icon === 'folder'}
             <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.75">
               <path d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z" />
+            </svg>
+          {:else if item.icon === 'news'}
+            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.75">
+              <path d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" />
             </svg>
           {:else if item.icon === 'terminal'}
             <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.75">

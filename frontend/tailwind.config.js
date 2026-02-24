@@ -8,14 +8,14 @@ export default {
       },
       colors: {
         surface: {
-          0: '#0a0a0b',
-          1: '#111113',
-          2: '#1a1a1e',
-          3: '#232329',
+          0: '#18181b',
+          1: '#1f1f23',
+          2: '#27272a',
+          3: '#323238',
         },
         border: {
-          DEFAULT: '#2a2a32',
-          hover: '#3a3a44',
+          DEFAULT: '#3f3f46',
+          hover: '#52525b',
         },
         accent: {
           DEFAULT: '#6366f1',

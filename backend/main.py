@@ -276,6 +276,53 @@ def get_weather():
         return {"error": str(e), "ts": int(time.time())}
 
 
+# News storage (in-memory for now)
+NEWS_DATA = {
+    "dutch-politics": {"articles": [], "last_updated": None},
+    "ai-news": {"articles": [], "last_updated": None},
+}
+
+
+@app.get("/api/news")
+def get_news():
+    """Get all news topics and their articles."""
+    return {
+        "topics": [
+            {"id": "dutch-politics", "name": "Dutch Politics", "count": len(NEWS_DATA["dutch-politics"]["articles"])},
+            {"id": "ai-news", "name": "AI News", "count": len(NEWS_DATA["ai-news"]["articles"])},
+        ],
+        "ts": int(time.time()),
+    }
+
+
+@app.get("/api/news/{topic}")
+def get_news_topic(topic):
+    """Get articles for a specific topic."""
+    if topic not in NEWS_DATA:
+        return {"error": "Topic not found", "articles": [], "ts": int(time.time())}
+    return {
+        "topic": topic,
+        "name": topic.replace("-", " ").title(),
+        "articles": NEWS_DATA[topic]["articles"][:20],
+        "last_updated": NEWS_DATA[topic]["last_updated"],
+        "ts": int(time.time()),
+    }
+
+
+@app.post("/api/news/{topic}")
+def update_news_topic(topic):
+    """Update news for a topic (called by cron or manually)."""
+    if topic not in NEWS_DATA:
+        return {"error": "Topic not found", "ts": int(time.time())}
+    
+    # For now, just return the current state (news fetching would be done externally)
+    return {
+        "topic": topic,
+        "updated": True,
+        "ts": int(time.time()),
+    }
+
+
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run(app, host="0.0.0.0", port=8000)
