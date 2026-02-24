@@ -9,6 +9,7 @@
     { href: '/', label: 'Overview', icon: 'grid' },
     { href: '/news', label: 'News', icon: 'news' },
     { href: '/kanban', label: 'Kanban', icon: 'kanban' },
+    { href: '/actions', label: 'Actions', icon: 'actions' },
     { href: '/projects', label: 'Projects', icon: 'folder' },
     { href: '/settings', label: 'Settings', icon: 'settings' },
   ];
