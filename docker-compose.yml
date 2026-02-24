@@ -27,3 +27,4 @@ services:
     restart: unless-stopped
     volumes:
       - /home/g/.openclaw/workspace:/workspace:rw
+      - /var/run/docker.sock:/var/run/docker.sock

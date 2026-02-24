@@ -255,6 +255,29 @@ def get_gateway_status():
         }
 
 
+@app.get("/api/health")
+def get_health():
+    """Get health status of all services."""
+    import docker
+    try:
+        client = docker.from_env()
+        containers = ['homegantry-ui', 'homegantry-api', 'homegantry-nginx']
+        status = []
+        for name in containers:
+            try:
+                c = client.containers.get(name)
+                status.append({
+                    'name': name,
+                    'status': c.status,
+                    'started': c.attrs.get('State', {}).get('StartedAt', '')
+                })
+            except Exception as e:
+                status.append({'name': name, 'status': 'error', 'error': str(e)})
+        return {'services': status, 'ts': int(time.time())}
+    except Exception as e:
+        return {'error': str(e), 'ts': int(time.time())}
+
+
 @app.get("/api/weather")
 def get_weather():
     """Get current weather for Amsterdam, NL."""
